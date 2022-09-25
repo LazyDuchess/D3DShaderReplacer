@@ -13,7 +13,11 @@
 #include <d3dcompiler.h>
 #include "ExtraData.h"
 
-#pragma comment(lib, "D3D Hook x86.lib")
+#if (_WIN64)
+	#pragma comment(lib, "D3D Hook x64.lib")
+#else
+	#pragma comment(lib, "D3D Hook x86.lib")
+#endif
 #pragma comment(lib, "d3dcompiler")
 #pragma comment(lib, "D3dx9.lib")
 
@@ -114,6 +118,7 @@ bool queuedReload = false;
 long CreatePixelShaderWrapper(int shaderId, bool replacementOnly, LPDIRECT3DDEVICE9 pDevice, DWORD* pFunction, IDirect3DPixelShader9** ppShader)
 {
 	bool replaced = false;
+	DWORD* pOldFunction = pFunction;
 	if (mode == Replace)
 	{
 		wchar_t extraDataPath[MAX_PATH];
@@ -211,6 +216,7 @@ long CreatePixelShaderWrapper(int shaderId, bool replacementOnly, LPDIRECT3DDEVI
 				ID3DBlob* errorBlob = nullptr;
 				HRESULT hr = D3DCompileFromFile(srcFile, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
 					entryPoint, profile,*/
+				ZeroMemory(sourceShaderStrMB, MAX_PATH);
 				WideCharToMultiByte(CP_ACP, 0, sourceShaderStr, wcslen(sourceShaderStr), sourceShaderStrMB, MAX_PATH, NULL, NULL);
 				/*
 				int fsize = filesize(sourceShaderStr);
